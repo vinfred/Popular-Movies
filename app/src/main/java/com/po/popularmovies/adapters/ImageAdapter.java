@@ -7,6 +7,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.po.popularmovies.R;
+import com.po.popularmovies.models.Movie;
+
+import java.util.ArrayList;
 
 /**
  * Created by mirka on 21.07.16.
@@ -14,17 +17,23 @@ import com.po.popularmovies.R;
 
 public class ImageAdapter extends BaseAdapter {
 	private Context mContext;
+	private ArrayList <Movie> movies;
 
-	public ImageAdapter(Context c) {
-		mContext = c;
+	public ImageAdapter(Context c, ArrayList <Movie> movies) {
+		this.mContext = c;
+		this.movies = movies;
+	}
+
+	public void setMovies (ArrayList<Movie> movies) {
+		this.movies = movies;
 	}
 
 	public int getCount() {
-		return 8;
+		return movies.size();
 	}
 
-	public Object getItem(int position) {
-		return null;
+	public Movie getItem(int position) {
+		return movies.get(position);
 	}
 
 	public long getItemId(int position) {
@@ -43,6 +52,7 @@ public class ImageAdapter extends BaseAdapter {
 			imageView = (ImageView) convertView;
 		}
 
+		//FIXME
 		imageView.setImageResource(R.drawable.sample_poster);
 		return imageView;
 	}
