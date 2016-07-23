@@ -13,6 +13,7 @@ import com.po.popularmovies.models.Movie;
 import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
+	private static final String BASE_URL = "http://image.tmdb.org/t/p/w342/";
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -23,19 +24,22 @@ public class DetailActivity extends AppCompatActivity {
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		if (null != getSupportActionBar())
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
-		collapsingToolbar.setTitleEnabled(true);
 		collapsingToolbar.setTitle(movie.getOriginalTitle());
 
-		//((ImageView) findViewById(R.id.imageview_poster)).setBackgroundResource(R.drawable.sample_poster_big);
+		ImageView iv = resizeImageView ((ImageView) findViewById(R.id.imageview_poster));
 
-		ImageView iv = (ImageView) findViewById(R.id.imageview_poster);
+		Picasso.with(this)
+				.load(BASE_URL + movie.getMoviePath())
+				.fit()
+				.centerCrop()
+				.into(iv);
+	}
 
-
-
+	private ImageView resizeImageView (ImageView iv) {
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
@@ -43,17 +47,6 @@ public class DetailActivity extends AppCompatActivity {
 		iv.getLayoutParams().height = size.x;
 		iv.getLayoutParams().width = size.x;
 
-		final String BASE_URL = "http://image.tmdb.org/t/p/w342/";
-		Picasso.with(this)
-				.load(BASE_URL + movie.getMoviePath())
-				//.resize(size.x, size.x)
-				.fit()
-
-				.centerCrop()
-				.into(iv);
-
-
-
+		return iv;
 	}
-
 }

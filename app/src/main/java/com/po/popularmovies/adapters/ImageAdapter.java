@@ -7,15 +7,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.po.popularmovies.R;
 import com.po.popularmovies.models.Movie;
 
 import java.util.ArrayList;
 
-/**
- * Created by mirka on 21.07.16.
- */
-
 public class ImageAdapter extends BaseAdapter {
+	private static final String BASE_URL = "http://image.tmdb.org/t/p/w185/";
+
 	private Context mContext;
 	private ArrayList <Movie> movies;
 
@@ -37,28 +36,26 @@ public class ImageAdapter extends BaseAdapter {
 	}
 
 	public long getItemId(int position) {
-		return 0;
+		return movies.get(position).getId();
 	}
 
-	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ImageView imageView;
 		if (convertView == null) {
-			// if it's not recycled, initialize some attributes
 			imageView = new ImageView(mContext);
-			//imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
 			imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 		} else {
 			imageView = (ImageView) convertView;
 		}
 
-		String BASER_URL = "http://image.tmdb.org/t/p/w185/";
-
-		//FIXME flickering
+		//FIXME change placeholder
 		Glide.with(mContext)
-			.load(BASER_URL + movies.get(position).getMoviePath())
+			.load(BASE_URL + movies.get(position).getMoviePath())
 			.fitCenter()
+			.dontAnimate()
+			.placeholder(R.drawable.sample_poster)
 			.into(imageView);
+
 
 		return imageView;
 	}

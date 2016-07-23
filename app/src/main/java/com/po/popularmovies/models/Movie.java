@@ -3,10 +3,6 @@ package com.po.popularmovies.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by mirka on 21.07.16.
- */
-
 public class Movie implements Parcelable {
 	private int id;
 	private String moviePath;
@@ -88,7 +84,7 @@ public class Movie implements Parcelable {
 		dest.writeString(this.releaseDate);
 	}
 
-	protected Movie (Parcel in) {
+	private Movie (Parcel in) {
 		this.id = in.readInt();
 		this.moviePath = in.readString();
 		this.originalTitle = in.readString();

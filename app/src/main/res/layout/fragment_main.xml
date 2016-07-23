@@ -13,10 +13,4 @@
 
     android:verticalSpacing="0dp"
     android:horizontalSpacing="0dp"
-    android:stretchMode="columnWidth"
-    />
-
-
-    <!--android:scrollbarStyle="outsideOverlay"
-       android:verticalScrollbarPosition="right"
-       android:scrollbars="vertical"-->
+    android:stretchMode="columnWidth"/>
