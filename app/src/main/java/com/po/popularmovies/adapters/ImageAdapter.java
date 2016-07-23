@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.po.popularmovies.R;
+import com.bumptech.glide.Glide;
 import com.po.popularmovies.models.Movie;
 
 import java.util.ArrayList;
@@ -52,8 +52,14 @@ public class ImageAdapter extends BaseAdapter {
 			imageView = (ImageView) convertView;
 		}
 
-		//FIXME
-		imageView.setImageResource(R.drawable.sample_poster);
+		String BASER_URL = "http://image.tmdb.org/t/p/w185/";
+
+		//FIXME flickering
+		Glide.with(mContext)
+			.load(BASER_URL + movies.get(position).getMoviePath())
+			.fitCenter()
+			.into(imageView);
+
 		return imageView;
 	}
 }
