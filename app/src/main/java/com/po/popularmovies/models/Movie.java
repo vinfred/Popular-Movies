@@ -3,7 +3,7 @@ package com.po.popularmovies.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Movie implements Parcelable {
+public class Movie implements Parcelable{
 	private int id;
 	private String moviePath;
 	private String originalTitle;

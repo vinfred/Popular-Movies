@@ -4,9 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,8 +33,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivityFragment extends Fragment {
-	public final static String TAG = MainActivityFragment.class.getSimpleName();
+public class MainActivityFragment extends Fragment implements SortDialogFragment.OnDialogSelectorListener  {
+	//public final static String TAG = MainActivityFragment.class.getSimpleName();
+	private static final int DIALOG_FRAGMENT = 1;
+
 	private ImageAdapter adapter;
 
 	public MainActivityFragment () {
@@ -54,6 +62,7 @@ public class MainActivityFragment extends Fragment {
 			}
 		});
 
+		setHasOptionsMenu(true);
 
 		return rootView;
 	}
@@ -61,11 +70,55 @@ public class MainActivityFragment extends Fragment {
 	@Override
 	public void onStart () {
 		super.onStart();
-		new GetDataTask().execute();
+
+		updateMovies();
 	}
 
-	public class GetDataTask extends AsyncTask<Void, Void, ArrayList<Movie>> {
-		public final String TAG = GetDataTask.class.getSimpleName();
+	void updateMovies() {
+		String order  = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(
+				getString(R.string.pref_order_key),
+				getString(R.string.pref_order_default));
+
+		if (order.equals(getString(R.string.pref_order_popular))) {
+			final String POPULAR_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+			new GetDataTask().execute(POPULAR_BASE_URL);
+		} else {
+			final String RATING_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
+			new GetDataTask().execute(RATING_BASE_URL);
+		}
+	}
+
+	@Override
+	public void onSelectedOption () {
+		updateMovies();
+	}
+
+	@Override
+	public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_main_fragment, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected (MenuItem item) {
+		int id = item.getItemId();
+
+
+		if (id == R.id.action_sort) {
+			FragmentManager fm = getActivity().getSupportFragmentManager();
+			DialogFragment dialogFragment = new SortDialogFragment();
+			dialogFragment.setTargetFragment(this, DIALOG_FRAGMENT);
+			dialogFragment.show(fm, getString(R.string.dialog_sort_title));
+
+			return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+
+	}
+
+	private class GetDataTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+		final String TAG = GetDataTask.class.getSimpleName();
+
 
 
 		private ArrayList<Movie> parseJson (String movieJsonStr) throws JSONException {
@@ -95,19 +148,16 @@ public class MainActivityFragment extends Fragment {
 
 
 		@Override
-		protected ArrayList<Movie> doInBackground (Void... params) {
+		protected ArrayList<Movie> doInBackground (String... params) {
 			HttpURLConnection urlConnection = null;
 			BufferedReader reader = null;
 
 			String movieJsonStr = null;
 
 			try {
-
-				final String BASE_URL =
-						"http://api.themoviedb.org/3/movie/popular?";
 				final String APPID_PARAM = "api_key";
 
-				Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+				Uri builtUri = Uri.parse(params[0]).buildUpon()
 						.appendQueryParameter(APPID_PARAM, BuildConfig.API_KEY)
 						.build();
 
@@ -119,7 +169,7 @@ public class MainActivityFragment extends Fragment {
 
 				// Read the input stream into a String
 				InputStream inputStream = urlConnection.getInputStream();
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder builder = new StringBuilder();
 				if (inputStream == null) {
 					return null;
 				}
@@ -127,13 +177,13 @@ public class MainActivityFragment extends Fragment {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
-					buffer.append(line + "\n");
+					builder.append(line).append("\n");
 				}
 
-				if (buffer.length() == 0) {
+				if (builder.length() == 0) {
 					return null;
 				}
-				movieJsonStr = buffer.toString();
+				movieJsonStr = builder.toString();
 			}
 			catch (IOException e) {
 				Log.e(TAG, "Error ", e);
