@@ -54,11 +54,11 @@ public class SortDialogFragment extends DialogFragment {
 				.setSingleChoiceItems(opts, Arrays.asList(opts).indexOf(order), new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick (DialogInterface dialogInterface, int i) {
-						listener.onSelectedOption();
-
 						SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
 						editor.putString(getString(R.string.pref_order_key), opts[i]);
 						editor.commit();
+
+						listener.onSelectedOption();
 
 						dialogInterface.dismiss();
 					}
