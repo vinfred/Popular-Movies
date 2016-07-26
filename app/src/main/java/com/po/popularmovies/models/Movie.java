@@ -3,6 +3,8 @@ package com.po.popularmovies.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Locale;
+
 public class Movie implements Parcelable{
 	private int id;
 	private String moviePath;
@@ -32,42 +34,29 @@ public class Movie implements Parcelable{
 		return moviePath;
 	}
 
-	public void setMoviePath (String moviePath) {
-		this.moviePath = moviePath;
-	}
-
 	public String getOriginalTitle () {
 		return originalTitle;
-	}
-
-	public void setOriginalTitle (String originalTitle) {
-		this.originalTitle = originalTitle;
 	}
 
 	public String getOverview () {
 		return overview;
 	}
 
-	public void setOverview (String overview) {
-		this.overview = overview;
-	}
-
-	public double getRating () {
+	private double getRating () {
 		return rating;
 	}
 
-	public void setRating (double rating) {
-		this.rating = rating;
-	}
-
-	public String getReleaseDate () {
+	private String getReleaseDate () {
 		return releaseDate;
 	}
 
-	public void setReleaseDate (String releaseDate) {
-		this.releaseDate = releaseDate;
+	public String getFormattedRating () {
+		return String.format(Locale.ENGLISH, "%.1f", getRating()) + "/10";
 	}
 
+	public String getFormattedDate () {
+		return getReleaseDate().split("-")[0];
+	}
 
 	@Override
 	public int describeContents () {
